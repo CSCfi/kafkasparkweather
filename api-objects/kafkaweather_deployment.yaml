@@ -1,0 +1,105 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: weatherhelsinki
+  labels:
+    strimzi.io/kind: topic
+    strimzi.io/cluster: my-cluster
+    build: kafkaweather
+data:
+  name: weatherHelsinki
+  partitions: "3"
+  replicas: "1"
+  config: |-
+    {
+      "retention.bytes": "1073741824",
+      "retention.ms": "604800000",
+      "segment.bytes": "1073741824"
+    }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: weatherespoo
+  labels:
+    strimzi.io/kind: topic
+    strimzi.io/cluster: my-cluster
+    build: kafkaweather
+data:
+  name: weatherEspoo
+  partitions: "3"
+  replicas: "1"
+  config: |-
+    {
+      "retention.bytes": "1073741824",
+      "retention.ms": "604800000",
+      "segment.bytes": "1073741824"
+    }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kafkaweather-config
+  labels:
+    strimzi.io/type: kafka
+    build: kafkaweather
+data:
+  KAFKA_BROKERS: my-cluster-kafka:9092
+  NETATMO_REFRESH_TOKEN: <change>
+  NETATMO_USERNAME: ""
+  NETATMO_PASSWORD: ""
+  NETATMO_CLIENT_ID: <change>
+  NETATMO_CLIENT_SECRET: <change>
+
+---
+apiVersion: v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    build: kafkaweather
+  name: kafkaweather
+spec:
+  strategy:
+      type: Rolling
+  triggers:
+      - type: ConfigChange
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        build: kafkaweather
+    spec:
+      containers:
+      - name: kafkaweather
+        image: docker-registry.default.svc:5000/testspark/kafkaweather:latest
+        env:
+        - name: KAFKA_BROKERS
+          valueFrom:
+            configMapKeyRef:
+              name: kafkaweather-config
+              key: KAFKA_BROKERS
+        - name: NETATMO_REFRESH_TOKEN
+          valueFrom:
+            configMapKeyRef:
+              name: kafkaweather-config
+              key: NETATMO_REFRESH_TOKEN
+        - name: NETATMO_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: kafkaweather-config
+              key: NETATMO_USERNAME
+        - name: NETATMO_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              name: kafkaweather-config
+              key: NETATMO_PASSWORD
+        - name: NETATMO_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              name: kafkaweather-config
+              key: NETATMO_CLIENT_ID
+        - name: NETATMO_CLIENT_SECRET
+          valueFrom:
+            configMapKeyRef:
+              name: kafkaweather-config
+              key: NETATMO_CLIENT_SECRET
