@@ -10,11 +10,11 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>KafkaApp</mainClass>
+                            <mainClass>fi.csc.kafka.weather.app.KafkaApp</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
-                        <descriptorRef>jar</descriptorRef>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
                 </configuration>
                 <executions>

@@ -2,7 +2,7 @@ package fi.csc.kafka.weather.constants;
 
 public interface KafkaConstants {
 
-    public static String KAFKA_BROKERS = "127.0.0.1:9092";
+    public static String KAFKA_BROKERS = System.getenv("KAFKA_BROKERS");
 
     public static Integer MESSAGE_COUNT=1000;
 
