@@ -15,7 +15,7 @@ import fi.csc.kafka.weather.producer.WeatherProducer;
 
 public class KafkaApp {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		
 		
 		/* Uncomment the below section to obtain a refresh token for authenticating in future
@@ -23,17 +23,20 @@ public class KafkaApp {
 		 * Store the refresh token in NetatmoConstants for future use. 
 		 */
 		
-		/*
+
+
+/*
 		AuthTokenFactory authfactory = new AuthTokenFactory();
 		String refresh_token = authfactory.getRefreshToken();
 		System.out.println(refresh_token);  // Prints the refresh token
-		*/
+*/
+
 		
 		WeatherProducer producer = new WeatherProducer(
 				KafkaProducerFactory.createKafkaProducer(),
 				NetatmoConstants.NETATMO_REFRESH_TOKEN // Use the refresh token once you have it.
 				);
-		
+
 		TimerTask task = new TimerTask() {
 		      @Override
 		      public void run() {
@@ -54,7 +57,7 @@ public class KafkaApp {
 		  			espparams.put("lon_sw", "24.73");
 		  			espparams.put("lat_sw", "60.16");
 		  			
-		  			//producer.produce("weatherEspoo", espparams);
+		  			producer.produce("weatherEspoo", espparams);
 		  			
 		  			
 		  			
